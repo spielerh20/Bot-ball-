@@ -1,0 +1,343 @@
+int l_motor = 3;
+int r_motor = 0;
+int tophat = 2;
+int tophat_2 = 0;
+int pause = 500;
+int fspeed = 55;
+int ffspeed = 75;
+int speed = 95;
+int speed_2 = 10;
+int speed_3 = 20;
+int sspeed = 45;
+int target = 3850;
+int target_2 =2200;
+int target_3 = 3600;
+int target_4 = 1200;
+int target_gray = 3500;
+int camera = 2;
+int red = 0;
+int yellow = 1;
+int tube_orange = 2;
+int fire;
+int handle = 3;
+int claw = 1;
+int counter = 0;
+  
+int main()
+{
+  wait_for_light(4);
+  shut_down_in(120.0);
+  clawopen();
+  fowards_3();
+  clawstart();
+  msleep(pause);
+  findline();
+  msleep(pause);
+  findwhite();
+  msleep(pause);
+  fowards();
+  msleep(200);
+  bigleft();
+  msleep(pause);
+  fowards_2();
+  msleep(pause);
+  findline();
+  msleep(pause);
+  bigleft_2();
+  turnleft();
+  msleep(250);
+  foward_black();
+  bigleft_4();
+  follow();
+  camera_open();
+  get_data();
+  findbuilding(); 
+  //camera_close();
+    
+}
+
+/// functions def
+void fowards_3(){
+motor(l_motor,fspeed);
+motor(r_motor,sspeed);
+msleep(220);
+ao();
+}
+
+void backwards_2(){
+  motor(l_motor,-fspeed);
+motor(r_motor,-speed);
+}
+
+void clawstart(){
+  
+  enable_servos();
+ printf("starting!/n");
+  set_servo_position(3,2000);
+  msleep(pause);
+  int start_pos = 1000;
+  int end_pos = 10;
+  while(start_pos > end_pos){
+    set_servo_position(2,start_pos);
+    msleep(5);
+    start_pos = start_pos - 10;
+  }
+set_servo_position(2,0);
+  msleep(pause);
+  set_servo_position(3, 1800);
+  msleep(1000);
+  set_servo_position(3, 1700);
+  msleep(1000);
+  set_servo_position(3, 1550);
+  msleep(1000);
+  set_servo_position(3, 1350);
+  msleep(1000);
+set_servo_position(2, 0);
+msleep(pause);
+
+  return 0; 
+}
+
+void clawopen(){
+  enable_servos();
+set_servo_position(3, 600);
+msleep(pause);
+set_servo_position(2, 1090);
+msleep(pause);
+}
+void fowards(){
+motor(l_motor,fspeed);
+motor(r_motor,sspeed);
+} 
+
+void fowards_2(){
+motor(l_motor,fspeed);
+motor(r_motor,sspeed);
+msleep(pause);
+}
+
+void foward_black(){
+ while (analog(tophat) < target){
+   fowards();
+}
+ao();
+}
+
+void backwards(){
+    motor (l_motor,-fspeed); 
+    motor (r_motor,-sspeed);  
+}
+
+void turnright(){
+     motor(l_motor,fspeed);
+     motor(r_motor,-sspeed);
+  }
+
+void turnleft(){
+     motor(l_motor,-fspeed);
+     motor(r_motor,sspeed);
+  }
+
+void turnleft_f(){
+     motor(l_motor,-ffspeed);
+     motor(r_motor,sspeed);
+  }
+
+void rearLeft(){
+ motor(l_motor,speed_3);
+ motor(r_motor,speed);
+}
+ 
+void rearRight(){ // turn the robot a little to the left
+ motor(l_motor,speed);
+ motor(r_motor,speed_3);
+}
+
+
+void follow(){
+   
+  while (analog(tophat_2) < target_3){
+    printf("starting line follow!\n");
+      
+      if (analog(tophat) > target){
+     rearLeft();
+    printf("vearing left!\n");
+     printf("tophat = %d\n", analog (tophat));
+  }
+  
+    if (analog(tophat) < target){
+     rearRight();
+ printf("vearing right!\n");
+  printf("tophat = %d\n", analog (tophat));
+    }
+    }
+  ao();
+}
+
+  
+void findline(){ 
+  while(analog (tophat) < target){
+  fowards();
+ //  printf("tophat = %d\n", analog (tophat));
+ }
+  ao(); 
+ printf("found line!\n"); 
+} 
+
+void findline_2(){ 
+  while(analog (tophat) > target_3){
+  fowards();
+ //  printf("tophat = %d\n", analog (tophat));
+ }
+  ao(); 
+ printf("found line gray!\n"); 
+}
+
+void findwhite(){ 
+  while(analog (tophat) > target){
+  fowards();
+ //  printf("found White\n");
+ }
+  ao(); 
+ printf("found white!\n"); 
+} 
+
+void bigleft_2(){
+  while (analog (tophat_2) <= target_4)
+  motor(r_motor,sspeed);
+  motor(l_motor,-fspeed);
+  msleep(2000);
+  printf("found line turning left\n");
+ao();
+}
+ 
+
+void bigleft(){
+  while (analog(tophat_2) < target_2){
+    turnleft();
+    
+}
+  printf("stopped turn left\n");
+ao;
+}
+
+void bigleft_3(){
+  while (analog(tophat) < target){
+    turnleft();
+    
+}
+  printf("turn left and found black\n");
+ao;
+}
+
+void bigleft_f(){
+  while (analog(tophat) < target){
+    turnleft();
+    
+}
+  printf("turn left and found black\n");
+ao;
+}
+
+void bigleft_4(){
+    turnleft();
+  msleep(1300);
+}
+
+  
+ void bigright(){
+   while (analog(tophat) < target){
+     turnright();
+     printf("found line turning right\n");
+ }
+ }
+  
+void right_fire(){
+ camera_update();
+ while(1){ 
+ if (get_object_count(yellow) < 0)
+   turnright();
+   break;
+}
+}
+
+void get_data(){
+  while(counter < 6){
+   camera_update();
+    printf("numberofyellow=%d\n", get_object_count(yellow));
+     printf("numberoforred=%d\n", get_object_count(red));
+    msleep(100);
+    counter= counter+1;
+  }
+  counter = 0;
+}
+
+void building_1(){ /// on fire
+  fowards();
+  msleep(100);
+  turnright();
+  msleep(100);
+  ao();
+set_servo_position(2, 500);
+msleep(pause); 
+  turnright();
+  msleep(1500);
+   fowards();
+  msleep(1700);
+  turnleft();
+  msleep(200);
+  backwards();
+  msleep(4000);
+  
+}
+  
+void building_2(){ /// not on fire
+  fowards();
+  msleep(500);
+  backwards();
+  msleep(1700);
+  turnright();
+  msleep(1400);
+  fowards();
+  msleep(2500);
+  turnleft();
+  msleep(100);
+ set_servo_position(2, 500);
+msleep(pause);
+  backwards_2();
+  msleep(4000);
+  
+}
+      
+ void findbuilding(){
+ 
+  while(1){
+    camera_update();
+   if (get_object_count(yellow) > 0) {
+   if (get_object_count(red) > 0) {
+     printf("fire\n");
+     fire = 1;
+     break;
+   }
+   }
+   else{ 
+     printf("no fire\n");
+     fire = 0;
+     break;
+   }
+  }
+ 
+
+while(1){
+if (fire == 1){
+building_1();
+break;
+
+}
+if (fire == 0){
+building_2();
+break;
+}   
+  }
+  }
+
